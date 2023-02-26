@@ -1,0 +1,122 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+//store members or non members
+model Member {
+  id                   String         @id @default(uuid())
+  firstName            String
+  lastName             String
+  userName             String
+  password             String
+  contactNumber        String?
+  contributionPerMonth Decimal?
+  member               Boolean
+  active               Boolean?
+  role                 Role           @relation(fields: [roleId], references: [id])
+  roleId               String
+  Contribution         Contribution[]
+  Loan                 Loan[]
+  LoanCoMakers         LoanCoMakers[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//contributions table
+model Contribution {
+  id              String  @id @default(uuid())
+  member          Member  @relation(fields: [memberId], references: [id])
+  memberId        String
+  ctransactionNum String
+  amount          Decimal
+  paymentType     Int
+  remarks         String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//loans table
+model Loan {
+  id                 String          @id @default(uuid())
+  loanee             Member          @relation(fields: [loaneeId], references: [id])
+  loaneeId           String
+  lTransactionNumber String
+  amountLoan         Decimal
+  monthsPayable      Int
+  interestPercentage Float
+  interestAmount     Decimal
+  penaltyAmount      Decimal
+  status             Int
+  remarks            String
+  LoanCoMakers       LoanCoMakers[]
+  loansPayments      loansPayments[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//loans payment table
+model loansPayments {
+  id                  String  @id @default(uuid())
+  loan                Loan    @relation(fields: [loanId], references: [id])
+  loanId              String
+  lpTransactionNumber String
+  paymentAmount       Decimal
+  remarks             String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//co makers table
+model LoanCoMakers {
+  loanId   String
+  memberId String
+  loan     Loan   @relation(fields: [loanId], references: [id])
+  member   Member @relation(fields: [memberId], references: [id])
+
+  @@id([loanId, memberId])
+}
+
+//roles table
+model Role {
+  id               String             @id @default(uuid())
+  roleName         String
+  description      String?
+  Member           Member[]
+  RolesPermissions RolesPermissions[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//permissions table
+model Permission {
+  id               String             @id @default(uuid())
+  permissionName   String
+  description      String?
+  RolesPermissions RolesPermissions[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//roles permissions table
+model RolesPermissions {
+  roleId       String
+  permissionId String
+  role         Role       @relation(fields: [roleId], references: [id])
+  permission   Permission @relation(fields: [permissionId], references: [id])
+
+  @@id([roleId, permissionId])
+}

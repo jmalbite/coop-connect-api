@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  dev-db:
+    image: postgres:13
+    ports:
+      - 5434:5432
+    environment:
+      - POSTGRES_USER=jmalbite
+      - POSTGRES_PASSWORD=jmALBITE
+      - POSTGRES_DB=amv-dev
