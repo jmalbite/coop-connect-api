@@ -23,7 +23,6 @@ export class MemberController {
 
   @Post('create')
   createMember(@Body() params: CreateMemberDto) {
-    console.log(params);
     return this.memberService.createMember(params);
   }
 

@@ -33,13 +33,14 @@ model Member {
 
 //contributions table
 model Contribution {
-  id              String  @id @default(uuid())
-  member          Member  @relation(fields: [memberId], references: [id])
-  memberId        String
-  ctransactionNum String
-  amount          Decimal
-  paymentType     Int
-  remarks         String
+  id                 String   @id @default(uuid())
+  member             Member   @relation(fields: [memberId], references: [id])
+  memberId           String
+  cTransactionNumber String   @unique
+  amount             Decimal
+  paymentType        Int
+  remarks            String?
+  contributionDate   DateTime
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -50,29 +51,31 @@ model Loan {
   id                 String          @id @default(uuid())
   loanee             Member          @relation(fields: [loaneeId], references: [id])
   loaneeId           String
-  lTransactionNumber String
+  lTransactionNumber String          @unique
   amountLoan         Decimal
   monthsPayable      Int
   interestPercentage Float
   interestAmount     Decimal
   penaltyAmount      Decimal
   status             Int
-  remarks            String
+  remarks            String?
   LoanCoMakers       LoanCoMakers[]
-  loansPayments      loansPayments[]
+  loansPayments      LoansPayments[]
+  loanIssued         DateTime
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 //loans payment table
-model loansPayments {
-  id                  String  @id @default(uuid())
-  loan                Loan    @relation(fields: [loanId], references: [id])
+model LoansPayments {
+  id                  String   @id @default(uuid())
+  loan                Loan     @relation(fields: [loanId], references: [id])
   loanId              String
-  lpTransactionNumber String
+  lpTransactionNumber String   @unique
   paymentAmount       Decimal
-  remarks             String
+  remarks             String?
+  loanPaid            DateTime
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
