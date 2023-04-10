@@ -1,13 +1,18 @@
 /* eslint-disable prettier/prettier */
 import {
-  IsString,
   IsNotEmpty,
   IsNumber,
   IsOptional,
+  IsString,
   IsUUID,
 } from "class-validator";
 
-export class CreateContributionDto {
+export class EditContributionDto {
+  @IsNotEmpty()
+  @IsUUID()
+  @IsString()
+  id: string;
+
   @IsNotEmpty()
   @IsUUID()
   @IsString()

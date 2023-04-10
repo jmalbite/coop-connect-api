@@ -1,7 +1,7 @@
-import { Injectable } from '@nestjs/common';
-import { PrismaService } from '../prisma/prisma.service';
-import { CreateMemberDto } from './dto/create.member.dto';
-import { memberSelectedReturns } from './export/member.export';
+import { Injectable } from "@nestjs/common";
+import { PrismaService } from "../prisma/prisma.service";
+import { CreateMemberDto } from "./dto";
+import { memberSelectedReturns } from "./export";
 
 @Injectable()
 export class MemberService {

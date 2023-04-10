@@ -1,5 +1,5 @@
 /* eslint-disable prettier/prettier */
-import { IsString, IsNotEmpty, IsBoolean, IsNumber } from 'class-validator';
+import { IsString, IsNotEmpty, IsBoolean, IsNumber } from "class-validator";
 
 export class CreateMemberDto {
   @IsString()
@@ -22,7 +22,7 @@ export class CreateMemberDto {
   contactNumber?: string;
 
   @IsNumber({ maxDecimalPlaces: 2 })
-  contributionPerMonth?: number;
+  contributionPerMonth: number;
 
   @IsBoolean()
   member: boolean;

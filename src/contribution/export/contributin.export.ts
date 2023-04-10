@@ -1,10 +1,12 @@
 /* eslint-disable prettier/prettier */
 
-export function contributionSelectedReturns(): object {
+import { Prisma } from "@prisma/client";
+
+export const contributionSelectedReturns = (): Prisma.ContributionArgs => {
   return {
     select: {
       id: true,
-      ctransactionNum: true,
+      cTransactionNumber: true,
       member: {
         select: {
           id: true,
@@ -12,9 +14,10 @@ export function contributionSelectedReturns(): object {
           lastName: true,
         },
       },
+      contributionDate: true,
       amount: true,
       paymentType: true,
       remarks: true,
     },
   };
-}
+};

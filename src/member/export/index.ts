@@ -1,2 +1,2 @@
 /* eslint-disable prettier/prettier */
-export * from "./create.member.dto";
+export * from "./member.export";
