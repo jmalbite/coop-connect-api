@@ -5,12 +5,12 @@ import { ValidationPipe } from "@nestjs/common";
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  app.enableCors({
-    origin: ["http://example1.com"],
-    credentials: true,
-    methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
-    allowedHeaders: ["Content-Type", "Authorization"],
-  });
+  // app.enableCors({
+  //   origin: ["http://example1.com"],
+  //   credentials: true,
+  //   methods: ["GET", "HEAD", "PUT", "PATCH", "POST", "DELETE"],
+  //   allowedHeaders: ["Content-Type", "Authorization"],
+  // });
 
   /**
    * enable dto validations set per dto's

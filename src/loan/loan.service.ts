@@ -1,18 +1,20 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, HttpStatus, ForbiddenException } from "@nestjs/common";
 
 import { PrismaService } from "src/prisma/prisma.service";
-import { PrismaInitException } from "src/common";
+import { CoMakersException, PrismaInitException } from "src/common";
 import { AddLoanDto } from "./dto";
 import { addNewLoanQuery, selectedLoanQuery } from "./queries";
 import {
   TransactionNumberConstant,
   TransactionNumberGenerator,
 } from "src/utils";
+import { LoanUtilitiesService } from "./utils";
 
 @Injectable()
 export class LoanService {
   constructor(
     private prisma: PrismaService,
+    private utils: LoanUtilitiesService,
     private transConstant: TransactionNumberConstant,
     private transGenerator: TransactionNumberGenerator
   ) {}
@@ -32,6 +34,14 @@ export class LoanService {
       this.transConstant.classReference.LOAN
     );
 
+    const validateCoMakers = await this.utils.isMemberAlreadyCoMaker(params);
+
+    if (validateCoMakers.length) {
+      throw new CoMakersException(
+        this.utils.serializeMessageCoMakers(validateCoMakers)
+      );
+    }
+
     try {
       const newLoan = await this.prisma.loan.create({
         data: {
@@ -42,7 +52,7 @@ export class LoanService {
 
       return newLoan;
     } catch (error) {
-      throw new PrismaInitException();
+      throw new PrismaInitException(error?.message);
     }
   }
 }
