@@ -1,10 +1,46 @@
-version: '3.8'
+version: "3.8"
 services:
-  dev-db:
-    image: postgres:13
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/docker-dev/Dockerfile
+    container_name: coop-system-dev
+    volumes:
+      - .:/coop/src/app
+      - ./prisma:/coop/src/app/prisma
+    env_file:
+      - .env
+      - .env.test
     ports:
-      - 5434:5432
+      - "3000:3000"
+    depends_on:
+      - dev-db
+    networks:
+      - app-network
+
+  dev-db:
+    container_name: coop-db
+    image: postgres:13
     environment:
       - POSTGRES_USER=jmalbite
       - POSTGRES_PASSWORD=jmALBITE
       - POSTGRES_DB=amv-dev
+    ports:
+      - "5434:5434"
+    networks:
+      - app-network
+
+  test-db:
+    container_name: coop-test-db
+    image: postgres:13
+    environment:
+      - POSTGRES_USER=jmalbite
+      - POSTGRES_PASSWORD=jmALBITE
+      - POSTGRES_DB=amv-test-db
+    ports:
+      - "5432:5432"
+    networks:
+      - app-network
+networks:
+  app-network:
+    driver: bridge
