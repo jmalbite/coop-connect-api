@@ -13,6 +13,7 @@ services:
       - .env.test
     ports:
       - "3000:3000"
+      - "5555:5555" #expose prisma studio
     depends_on:
       - dev-db
     networks:
@@ -26,7 +27,7 @@ services:
       - POSTGRES_PASSWORD=jmALBITE
       - POSTGRES_DB=amv-dev
     ports:
-      - "5434:5434"
+      - "5444:5432"
     networks:
       - app-network
 
@@ -38,7 +39,7 @@ services:
       - POSTGRES_PASSWORD=jmALBITE
       - POSTGRES_DB=amv-test-db
     ports:
-      - "5432:5432"
+      - "5445:5432"
     networks:
       - app-network
 networks:

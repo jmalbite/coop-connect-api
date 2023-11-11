@@ -1,9 +1,10 @@
 FROM node:18-alpine3.16
 
-
 #Create app directory
 WORKDIR /coop/src/app
 
+# Install Nest CLI globally
+RUN npm install -g @nestjs/cli
 
 # Install app dependencies
 # A wildcard is used to ensure both package.json AND package-lock.json are copied
