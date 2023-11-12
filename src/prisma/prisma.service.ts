@@ -1,9 +1,13 @@
+/* eslint-disable prettier/prettier */
 import { Injectable, OnModuleDestroy, OnModuleInit } from "@nestjs/common";
 import { ConfigService } from "@nestjs/config";
 import { PrismaClient } from "@prisma/client";
 
 @Injectable()
-export class PrismaService extends PrismaClient {
+export class PrismaService
+  extends PrismaClient
+  implements OnModuleInit, OnModuleDestroy
+{
   constructor(config: ConfigService) {
     super({
       datasources: {
@@ -15,5 +19,28 @@ export class PrismaService extends PrismaClient {
 
       errorFormat: "pretty",
     });
+  }
+
+  async onModuleInit() {
+    await this.$connect();
+  }
+
+  async onModuleDestroy() {
+    await this.$disconnect();
+  }
+
+  async cleanDatabase() {
+    if (process.env.NODE_ENV === "production") return;
+
+    return await this.$transaction([
+      this.loanCoMakers.deleteMany(),
+      this.loansPayments.deleteMany(),
+      this.loan.deleteMany(),
+      this.member.deleteMany(),
+      this.contribution.deleteMany(),
+      this.rolesPermissions.deleteMany(),
+      this.role.deleteMany(),
+      this.permission.deleteMany(),
+    ]);
   }
 }
