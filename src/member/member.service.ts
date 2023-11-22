@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { CreateMemberDto } from "./dto";
-import { memberSelectedReturns } from "./export";
+import { CreateMemberDto } from "./common/dto";
+import { MemberResponse } from "./common/types/member.type";
 
 @Injectable()
 export class MemberService {
@@ -11,7 +11,20 @@ export class MemberService {
 
   async getMembers() {
     return await this.prisma.member.findMany({
-      ...memberSelectedReturns(),
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        userName: true,
+        contactNumber: true,
+        member: true,
+        active: true,
+        role: {
+          select: {
+            roleName: true,
+          },
+        },
+      },
     });
   }
 
@@ -19,20 +32,37 @@ export class MemberService {
    * get member by id
    * @param  {string} id
    */
-  async getMemberByid(id: string) {
-    return await this.prisma.member.findUnique({
+  async getMemberByid(id: string): Promise<MemberResponse> {
+    const data = await this.prisma.member.findUnique({
       where: {
         id,
       },
-      ...memberSelectedReturns(),
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        userName: true,
+        contactNumber: true,
+        member: true,
+        active: true,
+        contributionPerMonth: true,
+        role: {
+          select: {
+            roleName: true,
+          },
+        },
+      },
     });
+
+    console.log(data);
+    return data;
   }
 
   /**
    * create member
    * @param  {CreateMemberDto} params
    */
-  async createMember(params: CreateMemberDto) {
+  async createMember(params: CreateMemberDto): Promise<MemberResponse> {
     const newMember = await this.prisma.member.create({
       data: {
         ...params,
@@ -54,7 +84,20 @@ export class MemberService {
       data: {
         active: false,
       },
-      ...memberSelectedReturns(),
+      select: {
+        id: true,
+        firstName: true,
+        lastName: true,
+        userName: true,
+        contactNumber: true,
+        member: true,
+        active: true,
+        role: {
+          select: {
+            roleName: true,
+          },
+        },
+      },
     });
   }
 }

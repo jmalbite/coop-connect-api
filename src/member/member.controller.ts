@@ -7,7 +7,7 @@ import {
   ParseUUIDPipe,
 } from "@nestjs/common";
 import { MemberService } from "./member.service";
-import { CreateMemberDto } from "./dto";
+import { CreateMemberDto } from "./common/dto";
 
 @Controller("member")
 export class MemberController {

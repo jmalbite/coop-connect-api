@@ -1,7 +1,6 @@
-/* eslint-disable prettier/prettier */
 import { Prisma } from "@prisma/client";
 
-export const selectedLoanQuery = (): Prisma.LoanArgs => {
+export const selectedLoanQuery = (): Prisma.LoanDefaultArgs => {
   return {
     select: {
       id: true,
