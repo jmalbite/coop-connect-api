@@ -28,7 +28,7 @@ export class CreateMemberDto {
   member: boolean;
 
   @IsBoolean()
-  active?: boolean;
+  active: boolean;
 
   @IsString()
   roleId: string;

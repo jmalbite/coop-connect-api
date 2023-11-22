@@ -1,4 +1,11 @@
-import { Body, Controller, Post, Param, Get } from "@nestjs/common";
+import {
+  Body,
+  Controller,
+  Post,
+  Param,
+  Get,
+  ParseUUIDPipe,
+} from "@nestjs/common";
 import { MemberService } from "./member.service";
 import { CreateMemberDto } from "./dto";
 
@@ -6,7 +13,7 @@ import { CreateMemberDto } from "./dto";
 export class MemberController {
   constructor(private memberService: MemberService) {}
 
-  @Get("get-members")
+  @Get("members")
   getMembers() {
     return this.memberService.getMembers();
   }
@@ -17,7 +24,7 @@ export class MemberController {
    * @param  {string} id
    */
   @Get(":id")
-  getMemberByid(@Param("id") id: string) {
+  getMemberByid(@Param("id", ParseUUIDPipe) id: string) {
     return this.memberService.getMemberByid(id);
   }
 
@@ -26,16 +33,10 @@ export class MemberController {
    * @param  {} @Body(
    * @param  {CreateMemberDto} params
    */
-  @Post("create")
+  @Post()
   createMember(@Body() params: CreateMemberDto) {
     return this.memberService.createMember(params);
   }
-
-  /**
-   * create member
-   * @param  {} @Body(
-   * @param  {CreateMemberDto} params
-   */
 
   /**
    * deactivate member
@@ -43,7 +44,7 @@ export class MemberController {
    * @param  {string} id
    */
   @Post("deactivate/:id")
-  deactivateMember(@Param("id") id: string) {
+  deactivateMember(@Param("id", ParseUUIDPipe) id: string) {
     return this.memberService.deactivateMember(id);
   }
 }

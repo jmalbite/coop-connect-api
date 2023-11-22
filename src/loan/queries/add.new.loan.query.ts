@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { Prisma } from "@prisma/client";
 import { AddLoanDto } from "../dto";
 import { LoanStatus } from "src/utils";
