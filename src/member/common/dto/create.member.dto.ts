@@ -1,4 +1,3 @@
-/* eslint-disable prettier/prettier */
 import { IsString, IsNotEmpty, IsBoolean, IsNumber } from "class-validator";
 
 export class CreateMemberDto {
@@ -25,11 +24,14 @@ export class CreateMemberDto {
   contributionPerMonth: number;
 
   @IsBoolean()
+  @IsNotEmpty()
   member: boolean;
 
   @IsBoolean()
+  @IsNotEmpty()
   active: boolean;
 
   @IsString()
+  @IsNotEmpty()
   roleId: string;
 }

@@ -1,7 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import { contributionSelectedReturns } from "./export";
-import { CreateContributionDto, EditContributionDto } from "./dto";
+import { contributionSelectedReturns } from "./common/export";
+import { CreateContributionDto, EditContributionDto } from "./common/dto";
 import {
   TransactionNumberConstant,
   TransactionNumberGenerator,

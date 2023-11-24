@@ -5,7 +5,7 @@ import {
   EditContributionDto,
   GetContributionById,
   GetContributionByTransNumber,
-} from "./dto";
+} from "./common/dto";
 
 @Controller("contribution")
 export class ContributionController {

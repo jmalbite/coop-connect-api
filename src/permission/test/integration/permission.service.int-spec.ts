@@ -4,7 +4,7 @@ import { CreatePermissionDto } from "src/permission/common/dto/create-permission
 import {
   readPermission,
   writePermission,
-} from "src/permission/common/test-data/permission-test.data";
+} from "src/permission/common/test-data";
 import { PermissionService } from "src/permission/permission.service";
 import { PrismaService } from "src/prisma/prisma.service";
 

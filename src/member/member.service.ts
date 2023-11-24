@@ -1,7 +1,8 @@
-import { Injectable } from "@nestjs/common";
+import { Injectable, NotFoundException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateMemberDto } from "./common/dto";
-import { MemberResponse } from "./common/types/member.type";
+import { memberDefaultSelectionQuery } from "./common/queries/index";
+import { MemberResponse } from "./common/types/index";
 
 @Injectable()
 export class MemberService {
@@ -9,21 +10,10 @@ export class MemberService {
 
   //!Adding pagination for getting all members
 
-  async getMembers() {
+  async getMembers(): Promise<MemberResponse[]> {
     return await this.prisma.member.findMany({
       select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        userName: true,
-        contactNumber: true,
-        member: true,
-        active: true,
-        role: {
-          select: {
-            roleName: true,
-          },
-        },
+        ...memberDefaultSelectionQuery(),
       },
     });
   }
@@ -38,23 +28,12 @@ export class MemberService {
         id,
       },
       select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        userName: true,
-        contactNumber: true,
-        member: true,
-        active: true,
-        contributionPerMonth: true,
-        role: {
-          select: {
-            roleName: true,
-          },
-        },
+        ...memberDefaultSelectionQuery(),
       },
     });
 
-    console.log(data);
+    if (!data) throw new NotFoundException("Member not found");
+
     return data;
   }
 
@@ -67,7 +46,10 @@ export class MemberService {
       data: {
         ...params,
       },
-      // ...memberSelectedReturns(),
+
+      select: {
+        ...memberDefaultSelectionQuery(),
+      },
     });
     return newMember;
   }
@@ -76,8 +58,14 @@ export class MemberService {
    * deactivate member
    * @param  {string} id
    */
-  async deactivateMember(id: string) {
-    return await this.prisma.member.update({
+  async deactivateMember(id: string): Promise<MemberResponse> {
+    const isMemberExists = await this.prisma.member.findUnique({
+      where: { id },
+    });
+
+    if (!isMemberExists) throw new NotFoundException("Member not found");
+
+    const result = await this.prisma.member.update({
       where: {
         id,
       },
@@ -85,19 +73,10 @@ export class MemberService {
         active: false,
       },
       select: {
-        id: true,
-        firstName: true,
-        lastName: true,
-        userName: true,
-        contactNumber: true,
-        member: true,
-        active: true,
-        role: {
-          select: {
-            roleName: true,
-          },
-        },
+        ...memberDefaultSelectionQuery(),
       },
     });
+
+    return result;
   }
 }

@@ -1,6 +1,6 @@
 import { Body, Controller, Post } from "@nestjs/common";
 import { PermissionService } from "./permission.service";
-import { CreatePermissionDto } from "./common/dto/create-permission.dto";
+import { CreatePermissionDto } from "./common/dto/index";
 import { Permission } from "@prisma/client";
 
 @Controller("permission")

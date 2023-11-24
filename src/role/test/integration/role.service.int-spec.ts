@@ -2,10 +2,7 @@ import { Test } from "@nestjs/testing";
 import { AppModule } from "src/app.module";
 import { PrismaService } from "src/prisma/prisma.service";
 import { CreateRoleDto } from "src/role/common/dto";
-import {
-  adminRole,
-  memberRole,
-} from "src/role/common/test-data/role-test.data";
+import { adminRole, memberRole } from "src/role/common/test-data";
 import { RoleController } from "src/role/role.controller";
 import { RoleService } from "src/role/role.service";
 
