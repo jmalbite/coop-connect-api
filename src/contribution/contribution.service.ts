@@ -1,12 +1,12 @@
-import { Injectable } from "@nestjs/common";
-import { PrismaService } from "../prisma/prisma.service";
-import { contributionSelectedReturns } from "./common/export";
-import { CreateContributionDto, EditContributionDto } from "./common/dto";
+import { Injectable, NotFoundException } from "@nestjs/common";
+import { PrismaInitException } from "src/common";
 import {
   TransactionNumberConstant,
   TransactionNumberGenerator,
 } from "src/utils";
-import { PrismaInitException } from "src/common";
+import { PrismaService } from "../prisma/prisma.service";
+import { CreateContributionDto, EditContributionDto } from "./common/dto";
+import { contriDefaultSelectionQuery } from "./common/queries";
 
 @Injectable()
 export class ContributionService {
@@ -16,10 +16,13 @@ export class ContributionService {
     private transNumGenerator: TransactionNumberGenerator
   ) {}
 
+  //*add pagination
   async getContributions() {
     try {
       return await this.prisma.contribution.findMany({
-        ...contributionSelectedReturns(),
+        select: {
+          ...contriDefaultSelectionQuery(),
+        },
       });
     } catch (error) {
       throw new PrismaInitException();
@@ -27,6 +30,13 @@ export class ContributionService {
   }
 
   async createContribution(params: CreateContributionDto) {
+    const isValidMember = await this.isValidMember(params.memberId);
+
+    if (!isValidMember)
+      throw new NotFoundException(
+        "Member is invalid, please check member details"
+      );
+
     const transactionNum = this.transNumGenerator.generateTransactionNumber(
       this.transConstant.classReference.CONTRIBUTION
     );
@@ -36,8 +46,9 @@ export class ContributionService {
         ...params,
         cTransactionNumber: transactionNum,
       },
-
-      ...contributionSelectedReturns(),
+      select: {
+        ...contriDefaultSelectionQuery(),
+      },
     });
 
     return newContribution;
@@ -48,8 +59,12 @@ export class ContributionService {
       where: {
         cTransactionNumber: cTransactionNumber,
       },
-      ...contributionSelectedReturns(),
+      select: {
+        ...contriDefaultSelectionQuery(),
+      },
     });
+
+    if (!contribution) throw new NotFoundException("Contribution not found");
 
     return contribution;
   }
@@ -59,13 +74,33 @@ export class ContributionService {
       where: {
         id,
       },
-      ...contributionSelectedReturns(),
+      select: {
+        ...contriDefaultSelectionQuery(),
+      },
     });
+
+    if (!contribution) throw new NotFoundException("Contribution not found");
 
     return contribution;
   }
 
   async editContribution(params: EditContributionDto) {
+    const isContributionExists = await this.prisma.contribution.findUnique({
+      where: {
+        id: params.id,
+      },
+    });
+
+    if (!isContributionExists)
+      throw new NotFoundException("Contribution not found");
+
+    const isValidMember = await this.isValidMember(params.memberId);
+
+    if (!isValidMember)
+      throw new NotFoundException(
+        "Member is invalid, please check member details"
+      );
+
     const updateContribution = await this.prisma.contribution.update({
       where: {
         id: params.id,
@@ -75,9 +110,23 @@ export class ContributionService {
         ...params,
       },
 
-      ...contributionSelectedReturns(),
+      select: {
+        ...contriDefaultSelectionQuery(),
+      },
     });
 
     return updateContribution;
+  }
+
+  private async isValidMember(id: string): Promise<boolean> {
+    const valid = await this.prisma.member.findUnique({
+      where: {
+        id,
+        active: true,
+        member: true,
+      },
+    });
+
+    return valid ? true : false;
   }
 }

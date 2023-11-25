@@ -1,11 +1,13 @@
-import { Controller, Get, Post, Body } from "@nestjs/common";
-import { ContributionService } from "./contribution.service";
 import {
-  CreateContributionDto,
-  EditContributionDto,
-  GetContributionById,
-  GetContributionByTransNumber,
-} from "./common/dto";
+  Body,
+  Controller,
+  Get,
+  Param,
+  ParseUUIDPipe,
+  Post,
+} from "@nestjs/common";
+import { CreateContributionDto, EditContributionDto } from "./common/dto";
+import { ContributionService } from "./contribution.service";
 
 @Controller("contribution")
 export class ContributionController {
@@ -16,27 +18,23 @@ export class ContributionController {
     return this.contribution.getContributions();
   }
 
-  @Post("contribute")
+  @Post("")
   createContribution(@Body() params: CreateContributionDto) {
     return this.contribution.createContribution(params);
   }
 
-  @Post("edit-contribution")
+  @Post("edit")
   editContribution(@Body() params: EditContributionDto) {
     return this.contribution.editContribution(params);
   }
 
-  @Post("get-contribution-by-transaction-number")
-  getContributionByTransactionNumber(
-    @Body() params: GetContributionByTransNumber
-  ) {
-    return this.contribution.getContributionByTransactionNumber(
-      params.cTransactionNumber.trim()
-    );
+  @Get(":id")
+  getContributionById(@Param("id", ParseUUIDPipe) id: string) {
+    return this.contribution.getContributionById(id);
   }
 
-  @Post("get-contribution-by-id")
-  getContributionById(@Body() params: GetContributionById) {
-    return this.contribution.getContributionById(params.id.trim());
+  @Get(":id")
+  getContributionByTransactionNumber(@Param("id") id: string) {
+    return this.contribution.getContributionByTransactionNumber(id);
   }
 }

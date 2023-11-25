@@ -18,7 +18,6 @@ export class PermissionService {
         ...params,
       },
     });
-
     return newPermission;
   }
 }
