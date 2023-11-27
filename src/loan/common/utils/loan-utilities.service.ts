@@ -1,8 +1,7 @@
-/* eslint-disable prettier/prettier */
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "src/prisma/prisma.service";
 import { AddLoanDto } from "../dto";
-import { CoMakers } from "src/common";
+import { membersAndActiveQuery, validateCoMakersQuery } from "../queries/index";
 
 interface AlreadyCoMake {
   member: Member;
@@ -21,40 +20,10 @@ interface Loan {
 export class LoanUtilitiesService {
   constructor(private prisma: PrismaService) {}
 
-  async coMakersChecker({ coMakers }: AddLoanDto) {
-    let testing: any[];
-
-    // coMakers.forEach(async ({ memberId }) => {
-    // const coMake = await this.isMemberAlreadyCoMaker(coMakers);
-    // console.log("🥂", coMake);
-
-    // if (coMake) {
-    //   testing;
-    // }
-    // });
-
-    console.log(testing);
-    return testing;
-  }
-
-  async isMemberAlreadyCoMaker({ coMakers }: AddLoanDto) {
-    const memberIds = coMakers.map(({ memberId }) => memberId);
-    const loanCoMakers = await this.prisma.loanCoMakers.findMany({
+  async isMemberAlreadyCoMaker(params: AddLoanDto) {
+    const result = await this.prisma.loanCoMakers.findMany({
       where: {
-        AND: [
-          {
-            memberId: {
-              in: memberIds,
-            },
-          },
-          {
-            loan: {
-              status: {
-                equals: 1,
-              },
-            },
-          },
-        ],
+        ...validateCoMakersQuery(params),
       },
       select: {
         member: {
@@ -69,7 +38,25 @@ export class LoanUtilitiesService {
         },
       },
     });
-    return loanCoMakers;
+
+    return result;
+  }
+
+  async isMembersAndActive(params: AddLoanDto): Promise<boolean> {
+    const { coMakers } = params;
+
+    const membersAndActive = await this.prisma.member.findMany({
+      where: {
+        ...membersAndActiveQuery(params),
+      },
+
+      select: {
+        firstName: true,
+        lastName: true,
+      },
+    });
+
+    return membersAndActive.length === coMakers.length;
   }
 
   serializeMessageCoMakers(data: AlreadyCoMake[] | any): string {

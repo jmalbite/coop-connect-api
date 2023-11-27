@@ -1,3 +1,24 @@
 {
-  // "peacock.remoteColor": "#34d7cb"
+  "todohighlight.defaultStyle": {},
+  "todohighlight.keywords": [
+    "DEBUG:",
+    "REVIEW:",
+    {
+      "text": "NOTE:",
+      "color": "black",
+      "isWholeLine": false,
+      "backgroundColor": "#b4f8c8"
+    },
+    {
+      "text": "HACK:",
+      "color": "#000",
+      "isWholeLine": false
+    },
+    {
+      "text": "MUST:",
+      "color": "black",
+      "isWholeLine": false,
+      "backgroundColor": "#b4f8c8"
+    }
+  ]
 }

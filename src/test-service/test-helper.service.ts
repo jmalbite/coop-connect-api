@@ -41,4 +41,47 @@ export class TestHelperService {
       skipDuplicates: true,
     });
   }
+
+  async getValidMember() {
+    const member = await this.prisma.member.findFirst({
+      where: {
+        active: true,
+        member: true,
+      },
+    });
+
+    return member;
+  }
+
+  async getNoDefaultMembers() {
+    const member = await this.prisma.member.findMany({
+      where: {
+        active: true,
+        member: true,
+      },
+    });
+
+    return member;
+  }
+
+  async getNotActiveMember() {
+    const member = await this.prisma.member.findFirst({
+      where: {
+        active: false,
+      },
+    });
+
+    return member;
+  }
+
+  async getNonMember() {
+    const member = await this.prisma.member.findFirst({
+      where: {
+        member: false,
+      },
+      take: 3,
+    });
+
+    return member;
+  }
 }
