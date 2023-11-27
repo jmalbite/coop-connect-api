@@ -8,9 +8,9 @@ services:
     volumes:
       - .:/coop/src/app
       - ./prisma:/coop/src/app/prisma
-    env_file:
-      - .env
-      - .env.test
+    # env_file:
+    #   - .env
+    #   - .env.test
     ports:
       - "3000:3000"
       - "5555:5555" #expose prisma studio

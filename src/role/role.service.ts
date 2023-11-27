@@ -13,6 +13,7 @@ export class RoleService {
    * @returns Promise
    */
   async createRole(params: CreateRoleDto): Promise<Role> {
+    // console.log(process.env.NODE_ENV, "😍");
     const newRole = await this.prisma.role.create({
       data: {
         ...params,

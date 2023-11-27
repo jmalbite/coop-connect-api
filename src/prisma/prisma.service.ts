@@ -12,8 +12,10 @@ export class PrismaService
     super({
       datasources: {
         db: {
-          // eslint-disable-next-line prettier/prettier
-          url: config.get("DATABASE_URL"),
+          url:
+            process.env.NODE_ENV === "test"
+              ? config.get("DATABASE_URL_TEST")
+              : config.get("DATABASE_URL"),
         },
       },
 

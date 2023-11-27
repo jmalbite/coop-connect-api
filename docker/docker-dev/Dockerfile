@@ -22,4 +22,3 @@ EXPOSE 3000
 
 # Start the Nest.js application
 CMD ["npm", "run", "start:dev"]
-# CMD ["sh", "-c", "dotenv -e .env && npm run start:dev"]
