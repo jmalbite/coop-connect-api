@@ -7,6 +7,8 @@ import { MemberModule } from "./member/member.module";
 import { PermissionModule } from "./permission/permission.module";
 import { PrismaModule } from "./prisma/prisma.module";
 import { RoleModule } from "./role/role.module";
+import { LoanPaymentModule } from "./loan-payment/loan-payment.module";
+import { LoanBalanceHistoryModule } from './loan-balance-history/loan-balance-history.module';
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import { RoleModule } from "./role/role.module";
     LoanModule,
     RoleModule,
     PermissionModule,
+    LoanPaymentModule,
+    LoanBalanceHistoryModule,
   ],
 })
 export class AppModule {}

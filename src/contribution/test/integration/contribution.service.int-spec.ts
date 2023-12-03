@@ -14,7 +14,10 @@ import {
 import { PrismaService } from "src/prisma/prisma.service";
 import { TestHelperModule } from "../../../test-service/test-helper.module";
 import { TestHelperService } from "../../../test-service/test-helper.service";
-import { newContribution, udpateContribution } from "../../test-data/index";
+import {
+  newContribution,
+  udpateContribution,
+} from "../../common/test-data/index";
 
 describe("Contribution Int", () => {
   let moduleRef: TestingModule;

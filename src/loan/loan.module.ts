@@ -15,5 +15,11 @@ import {
     TransactionNumberConstant,
     TransactionNumberGenerator,
   ],
+  exports: [
+    LoanService,
+    LoanUtilitiesService,
+    TransactionNumberConstant,
+    TransactionNumberGenerator,
+  ],
 })
 export class LoanModule {}

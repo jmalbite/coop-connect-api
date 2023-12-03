@@ -9,18 +9,38 @@ export class PrismaService
   implements OnModuleInit, OnModuleDestroy
 {
   constructor(config: ConfigService) {
-    super({
-      datasources: {
-        db: {
-          url:
-            process.env.NODE_ENV === "test"
-              ? config.get("DATABASE_URL_TEST")
-              : config.get("DATABASE_URL"),
-        },
-      },
-
-      errorFormat: "pretty",
-    });
+    switch (process.env.NODE_ENV) {
+      case "production":
+        super({
+          datasources: {
+            db: {
+              url: config.get("DATABASE_URL_PRODUCTION"),
+            },
+          },
+          errorFormat: "pretty",
+        });
+        break;
+      case "test":
+        super({
+          datasources: {
+            db: {
+              url: config.get("DATABASE_URL_TEST"),
+            },
+          },
+          errorFormat: "pretty",
+        });
+        break;
+      default:
+        super({
+          datasources: {
+            db: {
+              url: config.get("DATABASE_URL"),
+            },
+          },
+          errorFormat: "pretty",
+        });
+        break;
+    }
   }
 
   async onModuleInit() {
@@ -43,6 +63,7 @@ export class PrismaService
       this.rolesPermissions.deleteMany(),
       this.role.deleteMany(),
       this.permission.deleteMany(),
+      this.loanBalanceHistory.deleteMany(),
     ]);
   }
 }

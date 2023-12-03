@@ -1,4 +1,4 @@
-import { CreateContributionDto, EditContributionDto } from "../common/dto";
+import { CreateContributionDto, EditContributionDto } from "../dto";
 
 const newDate = new Date();
 
