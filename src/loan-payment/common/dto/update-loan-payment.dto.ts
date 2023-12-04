@@ -13,6 +13,10 @@ export class UpdateLoanPaymentDto {
   id: string;
 
   @IsNotEmpty()
+  @IsUUID()
+  loanId: string;
+
+  @IsNotEmpty()
   @IsNumber({ maxDecimalPlaces: 2 })
   paymentAmount: number;
 

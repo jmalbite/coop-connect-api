@@ -12,6 +12,11 @@ import { CoMakers } from "src/common";
 import { addLoanPayment } from "src/loan-payment/common/test-data";
 import { AddLoanPaymentDto } from "src/loan-payment/common/dto/add-loan-payment.dto";
 import { NotFoundException } from "@nestjs/common";
+import { UpdateLoanPaymentDto } from "src/loan-payment/common/dto/update-loan-payment.dto";
+import {
+  updateLoanPayment,
+  changeAmountUpdate,
+} from "../../common/test-data/index";
 
 describe("LoanPaymentService Int", () => {
   let moduleRef: TestingModule;
@@ -138,7 +143,26 @@ describe("LoanPaymentService Int", () => {
   });
 
   describe("updateLoanPayment()", () => {
-    it.todo("should throw exception if loan not found");
-    it.todo("should update loan");
+    it("should throw exception if loan payment not found", async () => {
+      const result = loanPayment.updateLoanPayment({
+        ...updateLoanPayment,
+        id: nonExistentId,
+      });
+
+      await expect(result).rejects.toThrowError(NotFoundException);
+    });
+
+    it("should update loan payment", async () => {
+      const data: UpdateLoanPaymentDto = {
+        ...changeAmountUpdate,
+        id: createdPayment["id"],
+        loanId: createdPayment["loanId"],
+      };
+
+      const result = await loanPayment.updateLoanPayment(data);
+
+      expect(result.remarks).toBe(data.remarks);
+      expect(Number(result.paymentAmount)).toBe(data.paymentAmount);
+    });
   });
 });
