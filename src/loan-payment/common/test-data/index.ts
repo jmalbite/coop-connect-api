@@ -25,7 +25,7 @@ export const updateLoanPayment: UpdateLoanPaymentDto = {
 export const changeAmountUpdate: UpdateLoanPaymentDto = {
   id: "to-be-filled",
   loanId: "to-be-filled",
-  paymentAmount: 3000,
+  paymentAmount: 2000,
   paymentType: 1,
   remarks: "change remarks",
   screenshot_id: "sample-screenshot-id",

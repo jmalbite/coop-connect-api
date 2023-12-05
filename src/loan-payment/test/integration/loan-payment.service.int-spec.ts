@@ -1,5 +1,10 @@
+import { NotFoundException } from "@nestjs/common";
 import { Test, TestingModule } from "@nestjs/testing";
 import { AppModule } from "src/app.module";
+import { CoMakers } from "src/common";
+import { AddLoanPaymentDto } from "src/loan-payment/common/dto/add-loan-payment.dto";
+import { UpdateLoanPaymentDto } from "src/loan-payment/common/dto/update-loan-payment.dto";
+import { addLoanPayment } from "src/loan-payment/common/test-data";
 import { LoanPaymentService } from "src/loan-payment/loan-payment.service";
 import { AddLoanDto } from "src/loan/common/dto";
 import { LoanService } from "src/loan/loan.service";
@@ -8,14 +13,9 @@ import { PrismaService } from "src/prisma/prisma.service";
 import { TestHelperModule } from "src/test-service/test-helper.module";
 import { TestHelperService } from "src/test-service/test-helper.service";
 import { addLoan } from "../../../loan/common/test-data/index";
-import { CoMakers } from "src/common";
-import { addLoanPayment } from "src/loan-payment/common/test-data";
-import { AddLoanPaymentDto } from "src/loan-payment/common/dto/add-loan-payment.dto";
-import { NotFoundException } from "@nestjs/common";
-import { UpdateLoanPaymentDto } from "src/loan-payment/common/dto/update-loan-payment.dto";
 import {
-  updateLoanPayment,
   changeAmountUpdate,
+  updateLoanPayment,
 } from "../../common/test-data/index";
 
 describe("LoanPaymentService Int", () => {
@@ -100,8 +100,6 @@ describe("LoanPaymentService Int", () => {
       expect(result.remarks).toBe(data.remarks);
       expect(result.screenshot_id).toBe(data.screenshot_id);
       createdPayment = result;
-
-      console.log(result);
     });
   });
 
@@ -163,6 +161,16 @@ describe("LoanPaymentService Int", () => {
 
       expect(result.remarks).toBe(data.remarks);
       expect(Number(result.paymentAmount)).toBe(data.paymentAmount);
+    });
+  });
+
+  describe("getLoanPaymentsByLoanId()", () => {
+    it("check payment result", async () => {
+      const result = await loanPayment.getLoanPaymentsByLoanId(
+        createdPayment["loanId"]
+      );
+
+      console.log(result);
     });
   });
 });

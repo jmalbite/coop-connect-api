@@ -29,26 +29,17 @@ export class LoanPaymentService {
     const transactionNum =
       this.transGenerator.generateTransactionNumber(transConstant);
 
-    return this.prisma.$transaction(async (tx) => {
-      //create first loan payment
-      const payment = await tx.loansPayments.create({
-        data: {
-          ...addLoanPaymentQuery(params, transactionNum),
-        },
+    const payment = await this.prisma.loansPayments.create({
+      data: {
+        ...addLoanPaymentQuery(params, transactionNum),
+      },
 
-        select: {
-          ...loanPaymenSelectionQuery(),
-        },
-      });
-
-      //update loan
-      const updatedLoan = await this.loan.decrementLoanBalance(
-        params.loanId,
-        params.paymentAmount
-      );
-
-      return { ...payment, updatedLoan };
+      select: {
+        ...loanPaymenSelectionQuery(),
+      },
     });
+
+    return payment;
   }
 
   async updateLoanPayment(params: UpdateLoanPaymentDto) {
@@ -63,33 +54,18 @@ export class LoanPaymentService {
 
     if (!loanPayment) throw new NotFoundException("Loan payment not found");
 
-    const currentAmount = Number(loanPayment.paymentAmount);
+    const updatedPayment = await this.prisma.loansPayments.update({
+      where: { id },
+      data: {
+        ...updateLoanPaymentQuery(params),
+      },
 
-    return this.prisma.$transaction(async (tx) => {
-      const updatedPayment = await tx.loansPayments.update({
-        where: { id },
-        data: {
-          ...updateLoanPaymentQuery(params),
-        },
-
-        select: {
-          ...loanPaymenSelectionQuery(),
-        },
-      });
-
-      const updatedAmount = updatedPayment.paymentAmount;
-
-      if (currentAmount === Number(updatedAmount)) return updatedPayment;
-
-      console.log("here", "👺");
-
-      const updatedLoanBalance = await this.loan.decrementLoanBalance(
-        params.loanId,
-        Number(updatedAmount)
-      );
-
-      return { ...updatedPayment, updatedLoan: updatedLoanBalance };
+      select: {
+        ...loanPaymenSelectionQuery(),
+      },
     });
+
+    return updatedPayment;
   }
 
   async getLoanPaymentById(id: string) {
@@ -112,6 +88,24 @@ export class LoanPaymentService {
     if (!payment) throw new NotFoundException("Payment not found");
 
     return payment;
+  }
+
+  async getLoanPaymentsByLoanId(loanId: string) {
+    return this.prisma.$transaction(async (tx) => {
+      const payments = await tx.loansPayments.findMany({
+        where: { loanId },
+        select: { ...loanPaymenSelectionQuery() },
+      });
+
+      const totalPayments = await tx.loansPayments.aggregate({
+        where: { loanId },
+        _sum: {
+          paymentAmount: true,
+        },
+      });
+
+      return { ...payments, totalPayments: totalPayments._sum.paymentAmount };
+    });
   }
 
   /**
