@@ -164,13 +164,42 @@ describe("LoanPaymentService Int", () => {
     });
   });
 
+  describe("addPaymentAgain ---", () => {
+    it("should another payment", () => {
+      const data: AddLoanPaymentDto = addLoanPayment;
+
+      setTimeout(async () => {
+        const result = await loanPayment.addLoanPayment({
+          ...data,
+          loanId: createdLoan["id"],
+          paymentAmount: 3000,
+        });
+
+        expect(result.loanId).toBe(createdLoan["id"]);
+        expect(Number(result.paymentAmount)).toBe(3000);
+        expect(result.remarks).toBe(data.remarks);
+        expect(result.screenshot_id).toBe(data.screenshot_id);
+      }, 1000);
+    });
+  });
+
   describe("getLoanPaymentsByLoanId()", () => {
     it("check payment result", async () => {
       const result = await loanPayment.getLoanPaymentsByLoanId(
         createdPayment["loanId"]
       );
 
-      console.log(result);
+      expect(result.length).toBeGreaterThanOrEqual(1);
+    });
+
+    it("should return empty array", async () => {
+      await prisma.loansPayments.deleteMany();
+
+      const result = await loanPayment.getLoanPaymentsByLoanId(
+        createdPayment["loanId"]
+      );
+
+      expect(result).toEqual([]);
     });
   });
 });

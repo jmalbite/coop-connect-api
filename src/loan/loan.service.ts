@@ -100,42 +100,24 @@ export class LoanService {
     return loan;
   }
 
-  async decrementLoanBalance(loanId: string, paidAmount: number) {
+  async updateRemainingBalance(id: string, totalPayments: number) {
     return this.prisma.$transaction(async (tx) => {
-      const balance = await tx.loanBalanceHistory.findFirst({
-        where: {
-          loanId,
-        },
-        orderBy: {
-          createdAt: "desc",
-        },
-        select: {
-          remainingBalance: true,
-        },
+      const getTotalMustBePaid = await tx.loan.findUnique({
+        where: { id },
+        select: { totalAmountToBePaid: true },
       });
 
-      const newBalance = Number(balance.remainingBalance) - paidAmount;
+      const { totalAmountToBePaid } = getTotalMustBePaid;
 
-      const updatedLoan = await tx.loan.update({
-        where: {
-          id: loanId,
-        },
+      const newBalance = Number(totalAmountToBePaid) - totalPayments;
 
+      //update remaining balance column
+      await tx.loan.update({
+        where: { id },
         data: {
           remainingBalance: newBalance,
-          loanHistory: {
-            create: {
-              remainingBalance: balance.remainingBalance,
-            },
-          },
-        },
-
-        select: {
-          ...loanDefaultSelectionQuery(),
         },
       });
-
-      return updatedLoan;
     });
   }
 }

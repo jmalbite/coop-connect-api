@@ -1,17 +1,17 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
-import { PrismaService } from "src/prisma/prisma.service";
-import { AddLoanPaymentDto } from "./common/dto/add-loan-payment.dto";
 import { LoanService } from "src/loan/loan.service";
-import {
-  addLoanPaymentQuery,
-  loanPaymenSelectionQuery,
-} from "./common/queries/index";
+import { PrismaService } from "src/prisma/prisma.service";
 import {
   TransactionNumberConstant,
   TransactionNumberGenerator,
 } from "src/utils";
+import { AddLoanPaymentDto } from "./common/dto/add-loan-payment.dto";
 import { UpdateLoanPaymentDto } from "./common/dto/update-loan-payment.dto";
-import { updateLoanPaymentQuery } from "./common/queries/index";
+import {
+  addLoanPaymentQuery,
+  loanPaymenSelectionQuery,
+  updateLoanPaymentQuery,
+} from "./common/queries/index";
 
 @Injectable()
 export class LoanPaymentService {
@@ -29,21 +29,36 @@ export class LoanPaymentService {
     const transactionNum =
       this.transGenerator.generateTransactionNumber(transConstant);
 
-    const payment = await this.prisma.loansPayments.create({
-      data: {
-        ...addLoanPaymentQuery(params, transactionNum),
-      },
+    return this.prisma.$transaction(async (tx) => {
+      const payment = await tx.loansPayments.create({
+        data: {
+          ...addLoanPaymentQuery(params, transactionNum),
+        },
+        select: {
+          ...loanPaymenSelectionQuery(),
+        },
+      });
 
-      select: {
-        ...loanPaymenSelectionQuery(),
-      },
+      const totalPayments = await tx.loansPayments.aggregate({
+        where: { loanId: params.loanId },
+        _sum: {
+          paymentAmount: true,
+        },
+      });
+
+      const { paymentAmount } = totalPayments._sum;
+
+      await this.loan.updateRemainingBalance(
+        params.loanId,
+        Number(paymentAmount)
+      );
+
+      return payment;
     });
-
-    return payment;
   }
 
   async updateLoanPayment(params: UpdateLoanPaymentDto) {
-    const { id } = params;
+    const { id, loanId } = params;
 
     const loanPayment = await this.prisma.loansPayments.findUnique({
       where: { id },
@@ -54,18 +69,31 @@ export class LoanPaymentService {
 
     if (!loanPayment) throw new NotFoundException("Loan payment not found");
 
-    const updatedPayment = await this.prisma.loansPayments.update({
-      where: { id },
-      data: {
-        ...updateLoanPaymentQuery(params),
-      },
+    return this.prisma.$transaction(async (tx) => {
+      const updatedPayment = await tx.loansPayments.update({
+        where: { id },
+        data: {
+          ...updateLoanPaymentQuery(params),
+        },
 
-      select: {
-        ...loanPaymenSelectionQuery(),
-      },
+        select: {
+          ...loanPaymenSelectionQuery(),
+        },
+      });
+
+      const totalPayments = await tx.loansPayments.aggregate({
+        where: { loanId },
+        _sum: {
+          paymentAmount: true,
+        },
+      });
+
+      const { paymentAmount } = totalPayments._sum;
+
+      await this.loan.updateRemainingBalance(loanId, Number(paymentAmount));
+
+      return updatedPayment;
     });
-
-    return updatedPayment;
   }
 
   async getLoanPaymentById(id: string) {
@@ -91,21 +119,18 @@ export class LoanPaymentService {
   }
 
   async getLoanPaymentsByLoanId(loanId: string) {
-    return this.prisma.$transaction(async (tx) => {
-      const payments = await tx.loansPayments.findMany({
-        where: { loanId },
-        select: { ...loanPaymenSelectionQuery() },
-      });
-
-      const totalPayments = await tx.loansPayments.aggregate({
-        where: { loanId },
-        _sum: {
-          paymentAmount: true,
-        },
-      });
-
-      return { ...payments, totalPayments: totalPayments._sum.paymentAmount };
+    const hasPaymentForTheLoan = await this.prisma.loansPayments.findFirst({
+      where: { loanId },
     });
+
+    if (!hasPaymentForTheLoan) return [];
+
+    const payments = await this.prisma.loansPayments.findMany({
+      where: { loanId },
+      select: { ...loanPaymenSelectionQuery() },
+    });
+
+    return payments;
   }
 
   /**
