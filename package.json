@@ -9,6 +9,14 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "quokka": {
+    "babel": {
+      "ts": true,
+      "plugins": [
+        "@babel/plugin-transform-typescript"
+      ]
+    }
+  },
   "scripts": {
     "build": "nest build",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",

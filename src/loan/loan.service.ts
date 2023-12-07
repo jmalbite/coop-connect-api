@@ -39,6 +39,7 @@ export class LoanService {
       throw new BadRequestException("Must have at least 2 comakers");
 
     const isValidMembers = await this.utils.isMembersAndActive(params);
+
     //checking if it is a member and active
     if (!isValidMembers)
       throw new BadRequestException(
@@ -97,5 +98,26 @@ export class LoanService {
     if (!loan) throw new NotFoundException("Loan not found");
 
     return loan;
+  }
+
+  async updateRemainingBalance(id: string, totalPayments: number) {
+    return this.prisma.$transaction(async (tx) => {
+      const getTotalMustBePaid = await tx.loan.findUnique({
+        where: { id },
+        select: { totalAmountToBePaid: true },
+      });
+
+      const { totalAmountToBePaid } = getTotalMustBePaid;
+
+      const newBalance = Number(totalAmountToBePaid) - totalPayments;
+
+      //update remaining balance column
+      await tx.loan.update({
+        where: { id },
+        data: {
+          remainingBalance: newBalance,
+        },
+      });
+    });
   }
 }

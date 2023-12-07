@@ -49,22 +49,26 @@ model Contribution {
 
 //loans table
 model Loan {
-  id                 String          @id @default(uuid())
-  loanee             Member          @relation(fields: [loaneeId], references: [id], onDelete: Cascade)
-  loaneeId           String
-  lTransactionNumber String          @unique
-  amountLoan         Decimal         @db.Decimal(12, 2)
-  monthsPayable      Int
-  interestPercentage Float
-  interestAmount     Decimal         @db.Decimal(12, 2)
-  processingFee      Decimal?        @db.Decimal(12, 2)
-  penaltyAmount      Decimal?        @db.Decimal(12, 2)
-  status             Int
-  remarks            String?
-  screenshot_id      String?
-  loanCoMakers       LoanCoMakers[]
-  loansPayments      LoansPayments[]
-  loanIssued         DateTime        @db.Date
+  id                   String               @id @default(uuid())
+  loanee               Member               @relation(fields: [loaneeId], references: [id], onDelete: Cascade)
+  loaneeId             String
+  lTransactionNumber   String               @unique
+  amountLoan           Decimal              @db.Decimal(12, 2)
+  monthsPayable        Int
+  interestInPercentage Float
+  interestInAmount     Decimal              @db.Decimal(12, 2)
+  totalAmountToBePaid  Decimal              @db.Decimal(12, 2)
+  paymentPerPayDay     Decimal              @db.Decimal(12, 2)
+  remainingBalance     Decimal?             @db.Decimal(12, 2)
+  processingFee        Decimal              @db.Decimal(12, 2)
+  remarks              String?
+  status               Int
+  screenshot_id        String?
+  penaltyAmount        Decimal?             @db.Decimal(12, 2)
+  loanCoMakers         LoanCoMakers[]
+  loansPayments        LoansPayments[]
+  loanHistory          LoanBalanceHistory[]
+  loanIssued           DateTime             @db.Date
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -77,9 +81,20 @@ model LoansPayments {
   loanId              String
   lpTransactionNumber String   @unique
   paymentAmount       Decimal  @db.Decimal(12, 2)
+  paymentType         Int
   remarks             String?
   loanPaid            DateTime @db.Date()
   screenshot_id       String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model LoanBalanceHistory {
+  id               String  @id @default(uuid())
+  loanId           String
+  remainingBalance Decimal @db.Decimal(12, 2)
+  loan             Loan    @relation(fields: [loanId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

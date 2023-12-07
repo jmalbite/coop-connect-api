@@ -27,22 +27,27 @@ export class AddLoanDto {
   @IsNotEmpty()
   @IsPositive()
   @IsNumber({ maxDecimalPlaces: 2 })
-  interestPercentage: number;
+  interestInPercentage: number;
 
   @IsNotEmpty()
   @IsPositive()
   @IsNumber({ maxDecimalPlaces: 2 })
-  interestAmount: number;
+  interestInAmount: number;
+
+  @IsNotEmpty()
+  @IsPositive()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  totalAmountToBePaid: number;
+
+  @IsNotEmpty()
+  @IsPositive()
+  @IsNumber({ maxDecimalPlaces: 2 })
+  paymentPerPayDay: number;
 
   @IsOptional()
   @IsPositive()
   @IsNumber({ maxDecimalPlaces: 2 })
-  processingFee?: number;
-
-  @IsOptional()
-  @IsPositive()
-  @IsNumber({ maxDecimalPlaces: 2 })
-  penaltyAmount?: number;
+  processingFee: number;
 
   @IsOptional()
   @IsString()

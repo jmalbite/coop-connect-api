@@ -133,9 +133,10 @@ describe("LoanService Int", () => {
       expect(result.loanee.id).toBe(loanee.id);
       expect(Number(result.amountLoan)).toBe(data.amountLoan);
       expect(result.monthsPayable).toBe(data.monthsPayable);
-      expect(result.interestPercentage).toBe(data.interestPercentage);
-      expect(Number(result.interestAmount)).toBe(data.interestAmount);
-      expect(Number(result.penaltyAmount)).toBe(data.penaltyAmount);
+      expect(result.interestInPercentage).toBe(data.interestInPercentage);
+      expect(Number(result.interestInAmount)).toBe(data.interestInAmount);
+      expect(Number(result.totalAmountToBePaid)).toBe(data.totalAmountToBePaid);
+      expect(Number(result.paymentPerPayDay)).toBe(data.paymentPerPayDay);
       expect(Number(result.processingFee)).toBe(data.processingFee);
       expect(result.remarks).toBe(data.remarks);
       expect(result.screenshot_id).toBe(data.screenshot_id);
