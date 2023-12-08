@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
+import * as argon from "argon2";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateMemberDto } from "./common/dto";
 import { memberDefaultSelectionQuery } from "./common/queries/index";
@@ -42,15 +43,21 @@ export class MemberService {
    * @param  {CreateMemberDto} params
    */
   async createMember(params: CreateMemberDto): Promise<MemberResponse> {
+    const hashPassword = await argon.hash(params.password);
+
     const newMember = await this.prisma.member.create({
       data: {
         ...params,
+        password: hashPassword,
       },
 
       select: {
         ...memberDefaultSelectionQuery(),
       },
     });
+
+    delete newMember.password;
+
     return newMember;
   }
 

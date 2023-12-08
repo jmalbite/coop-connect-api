@@ -1,5 +1,6 @@
 import { Injectable } from "@nestjs/common";
 import { Role } from "@prisma/client";
+import * as argon from "argon2";
 import { CreateMemberDto } from "src/member/common/dto";
 import { MemberResponse } from "src/member/common/types";
 import { MemberService } from "src/member/member.service";
@@ -22,8 +23,11 @@ export class TestHelperService {
   ): Promise<MemberResponse> {
     this.createdRole = await this.role.createRole(memberRole);
 
+    const hasPassword = await argon.hash(member.password);
+
     return await this.member.createMember({
       ...member,
+      password: hasPassword,
       roleId: this.createdRole.id,
     });
   }
@@ -31,10 +35,13 @@ export class TestHelperService {
   async createMultipleMember(membersData: CreateMemberDto[]) {
     this.createdRole = await this.role.createRole(memberRole);
 
+    const hasPassword = await argon.hash("testing123");
+
     return await this.prisma.member.createMany({
       data: membersData.map((member) => {
         return {
           ...member,
+          password: hasPassword,
           roleId: this.createdRole.id,
         };
       }),
