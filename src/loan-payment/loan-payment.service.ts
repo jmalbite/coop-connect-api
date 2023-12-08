@@ -23,7 +23,7 @@ export class LoanPaymentService {
   ) {}
 
   async addLoanPayment(params: AddLoanPaymentDto) {
-    await this.isLoanExists(params.loanId);
+    await this.loan.getLoanById(params.loanId);
 
     const transConstant = this.transConstant.classReference.LOAN_PAYMENT;
     const transactionNum =
@@ -131,30 +131,5 @@ export class LoanPaymentService {
     });
 
     return payments;
-  }
-
-  /**
-   * check if the loan exists
-   * @param  {string} loanId
-   */
-  private async isLoanExists(loanId: string) {
-    const loan = await this.loan.getLoanById(loanId);
-
-    if (!loan) throw new NotFoundException("Loan not found");
-  }
-
-  /**
-   * get the current amount for checking
-   * if the update is the same amount or not
-   * @param  {string} id
-   * @returns Promise
-   */
-  private async getCurrentAmount(id: string): Promise<number> {
-    const currentAmount = await this.prisma.loansPayments.findUnique({
-      where: { id },
-      select: { paymentAmount: true },
-    });
-
-    return Number(currentAmount.paymentAmount);
   }
 }

@@ -73,7 +73,7 @@ export class LoanService {
   }
 
   async getLoanById(id: string) {
-    const loan = await this.prisma.loan.findFirst({
+    const loan = await this.prisma.loan.findUnique({
       where: { id },
 
       select: {
@@ -87,7 +87,7 @@ export class LoanService {
   }
 
   async getLoanByTransactionNumber(lTransactionNumber: string) {
-    const loan = await this.prisma.loan.findFirst({
+    const loan = await this.prisma.loan.findUnique({
       where: { lTransactionNumber },
 
       select: {
