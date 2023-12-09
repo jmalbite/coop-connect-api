@@ -1,25 +1,11 @@
 import { Injectable } from "@nestjs/common";
-import { PrismaService } from "src/prisma/prisma.service";
-import { UserLoginDto } from "./common/dto/user-login.dto";
+import { MemberService } from "src/member/member.service";
 
 @Injectable()
 export class AuthService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private member: MemberService) {}
 
-  async validateMember(params: UserLoginDto) {
-    const member = await this.prisma.member.findFirst({
-      where: {
-        userName: params.username,
-      },
-      include: {
-        role: {
-          select: {
-            roleName: true,
-          },
-        },
-      },
-    });
-
-    if (!member) return null;
+  async validateMember(userName: string, password: string) {
+    return this.member.validateMemberForAuth(userName, password);
   }
 }

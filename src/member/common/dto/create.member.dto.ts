@@ -1,4 +1,10 @@
-import { IsString, IsNotEmpty, IsBoolean, IsNumber } from "class-validator";
+import {
+  IsString,
+  IsNotEmpty,
+  IsBoolean,
+  IsNumber,
+  IsStrongPassword,
+} from "class-validator";
 
 export class CreateMemberDto {
   @IsString()
@@ -15,6 +21,7 @@ export class CreateMemberDto {
 
   @IsString()
   @IsNotEmpty()
+  @IsStrongPassword()
   password: string;
 
   @IsString()

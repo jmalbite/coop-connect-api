@@ -63,7 +63,6 @@ export class PrismaService
       this.rolesPermissions.deleteMany(),
       this.role.deleteMany(),
       this.permission.deleteMany(),
-      this.loanBalanceHistory.deleteMany(),
     ]);
   }
 }
