@@ -11,7 +11,7 @@ export class RoleController {
    * create new role
    * @param params  CreateRoleDto
    */
-  @Post()
+  @Post("create")
   createRole(@Body() params: CreateRoleDto): Promise<Role> {
     return this.role.createRole(params);
   }

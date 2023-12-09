@@ -1,4 +1,5 @@
 import { Injectable, NotFoundException } from "@nestjs/common";
+import * as argon from "argon2";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateMemberDto } from "./common/dto";
 import { memberDefaultSelectionQuery } from "./common/queries/index";
@@ -42,15 +43,21 @@ export class MemberService {
    * @param  {CreateMemberDto} params
    */
   async createMember(params: CreateMemberDto): Promise<MemberResponse> {
+    const hashPassword = await argon.hash(params.password);
+
     const newMember = await this.prisma.member.create({
       data: {
         ...params,
+        password: hashPassword,
       },
 
       select: {
         ...memberDefaultSelectionQuery(),
       },
     });
+
+    delete newMember.password;
+
     return newMember;
   }
 
@@ -78,5 +85,32 @@ export class MemberService {
     });
 
     return result;
+  }
+
+  async validateMemberForAuth(userName: string, password: string) {
+    const member = await this.prisma.member.findUnique({
+      where: { userName },
+      select: {
+        id: true,
+        password: true,
+        role: {
+          select: {
+            roleName: true,
+          },
+        },
+      },
+    });
+
+    if (!member) return null;
+
+    const passwordMatch = await argon.verify(member.password, password);
+
+    if (!passwordMatch) return null;
+
+    return member;
+  }
+
+  async getMemberByIdForSerializer(id: string) {
+    return await this.prisma.member.findUnique({ where: { id } });
   }
 }

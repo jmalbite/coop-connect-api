@@ -1,13 +1,13 @@
 import {
   Body,
   Controller,
-  Post,
-  Param,
   Get,
+  Param,
   ParseUUIDPipe,
+  Post,
 } from "@nestjs/common";
-import { MemberService } from "./member.service";
 import { CreateMemberDto } from "./common/dto";
+import { MemberService } from "./member.service";
 
 @Controller("member")
 export class MemberController {
@@ -33,7 +33,7 @@ export class MemberController {
    * @param  {} @Body(
    * @param  {CreateMemberDto} params
    */
-  @Post()
+  @Post("create")
   createMember(@Body() params: CreateMemberDto) {
     return this.memberService.createMember(params);
   }

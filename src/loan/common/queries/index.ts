@@ -78,11 +78,6 @@ export const newLoanQuery = (
         memberId,
       })),
     },
-    loanHistory: {
-      create: {
-        remainingBalance: totalAmountToBePaid,
-      },
-    },
     loanIssued,
   };
 };
