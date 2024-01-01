@@ -23,7 +23,7 @@ export class AuthController {
   @HttpCode(HttpStatus.OK)
   @Post("login")
   sigIn(@Body() params: UserLoginDto) {
-    return { status: HttpStatus.OK };
+    return this.auth.getMemberDetails(params);
   }
 
   @HttpCode(HttpStatus.NO_CONTENT)

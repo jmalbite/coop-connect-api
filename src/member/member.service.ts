@@ -93,6 +93,7 @@ export class MemberService {
       select: {
         id: true,
         password: true,
+        userName: true,
         role: {
           select: {
             roleName: true,

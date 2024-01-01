@@ -20,5 +20,7 @@
       "isWholeLine": false,
       "backgroundColor": "#b4f8c8"
     }
-  ]
+  ],
+  "vsicons.presets.foldersAllDefaultIcon": true,
+  "material-icon-theme.activeIconPack": "nest"
 }
