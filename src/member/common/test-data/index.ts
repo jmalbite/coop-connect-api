@@ -4,7 +4,7 @@ import { CreateMemberDto } from "../dto";
 export const newMemberActive: CreateMemberDto = {
   firstName: "Fannie",
   lastName: "Quigley",
-  userName: "fanquigley",
+  userName: "Ortiz",
   password: "!test123@",
   contactNumber: "412-498-9127",
   contributionPerMonth: 2000,
@@ -29,7 +29,7 @@ export const newMemberActiveND: CreateMemberDto = {
 export const newMemberNotActive: CreateMemberDto = {
   firstName: "Linnie",
   lastName: "Pinkie",
-  userName: "fanquigley",
+  userName: "Will",
   password: "!test123@",
   contactNumber: "412-498-9127",
   contributionPerMonth: 1500,
@@ -41,7 +41,7 @@ export const newMemberNotActive: CreateMemberDto = {
 export const newNonMember: CreateMemberDto = {
   firstName: "Lonzo",
   lastName: "Dashawn",
-  userName: "fanquigley",
+  userName: "Kozey",
   password: "!test123@",
   contactNumber: "412-498-9127",
   contributionPerMonth: 2500,
